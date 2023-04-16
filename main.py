@@ -59,3 +59,6 @@ while True:
 ## close camera
 cam.release()
 cv2.destroyAllWindows()
+
+
+# hello world
