@@ -36,6 +36,8 @@ cam.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
 pygame.mixer.init()
 pygame.mixer.music.load("ding.mp3")
 
+resize_scale_factor = 5
+
 while True:
     ## press q or Esc to quit
     if (cv2.waitKey(1) & 0xFF == ord("q")) or (cv2.waitKey(1)==27):
@@ -46,15 +48,18 @@ while True:
 
     if img is None:
         continue
+
+    resized_image = cv2.resize(img, (img.shape[0]/resize_scale_factor, img.shape[1]/resize_scale_factor))
+
     ## predict yolo
-    results = yolo.predict(img)
+    results = yolo.predict(resized_image)
 
     has_alert = False
     for r in results:
         for b in r.boxes:
 
             xyxy = b.xyxy.numpy()[0]
-            xyxy = [int(a) for a in xyxy]
+            xyxy = [int(a)*resize_scale_factor for a in xyxy]
             c = ALERT_COLOR if rect_intersects_alert_region(xyxy) else NORMAL_COLOR
             if c == ALERT_COLOR:
                 has_alert = True
