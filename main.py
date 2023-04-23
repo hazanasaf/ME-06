@@ -2,6 +2,7 @@ from ultralytics import YOLO
 import cv2
 import pandas as pd
 from os import system
+import pygame
 
 WIDTH = 1000
 HEIGHT = 850
@@ -27,10 +28,13 @@ def rect_intersects_alert_region(xyxy):
 
 yolo = YOLO("yolov8n.pt")
 
-cam = cv2.VideoCapture(0, cv2.CAP_DSHOW) #0=front-cam, 1=back-cam
+
+cam = cv2.VideoCapture(0) #0=front-cam, 1=back-cam
 cam.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
 cam.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
 
+pygame.mixer.init()
+pygame.mixer.music.load("ding.mp3")
 
 while True:
     ## press q or Esc to quit
@@ -39,6 +43,7 @@ while True:
 
     ## read frames
     ret, img = cam.read()
+
     if img is None:
         continue
     ## predict yolo
@@ -60,7 +65,8 @@ while True:
     cv2.rectangle(img, (ALERT_REGION[0], ALERT_REGION[1]), (ALERT_REGION[2], ALERT_REGION[3]), (0,255,0), 2)
 
     if has_alert:
-        system("beep -f 440 -l 5")
+        pygame.mixer.music.play()
+    #    system("beep -f 440 -l 5")
 
     cv2.imshow("", img)
 
