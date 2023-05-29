@@ -1,0 +1,15 @@
+person
+stop sign
+dog
+cat
+car
+truck
+motorcycle
+bicycle
+train
+bus
+bench
+parking meter
+fire hydrant
+
+
