@@ -10,7 +10,7 @@ WIDTH = 640
 HEIGHT = 480
 NORMAL_COLOR = (255, 0, 0) # blue
 ALERT_COLOR = (0, 0, 255) # red
-ALERT_REGION = [120, 60, 210, 180]
+ALERT_REGION = [ int(x) for x in [3*WIDTH/8, HEIGHT/4, 5*WIDTH/8, 3*HEIGHT/4]]
 TIME_OF_LAST_DING = datetime.now()
 MIN_DING_INTERVAL = 3 # seconds
 resize_scale_factor = 1
@@ -45,7 +45,7 @@ def run_object_detection():
     cam = cv2.VideoCapture(0) #0=front-cam, 1=back-cam
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
-
+    
     pygame.mixer.init()
     TIME_OF_LAST_DING = datetime.now()
     
