@@ -5,6 +5,7 @@ from os import system
 import pygame
 from datetime import datetime
 import threading
+import time
 
 WIDTH = 640
 HEIGHT = 480
@@ -34,10 +35,12 @@ def read_warning_list():
 def rect_intersects_alert_region(xyxy):
     return rect_intersects_rect(xyxy, ALERT_REGION)
 
-def run_model_on_img(yolo, img, results):
+def run_model_on_img(yolo, img, timestamp, latest_results):
     tmp = yolo.predict(img)
-    results.clear()
-    results.extend(tmp)
+    if timestamp > latest_results['timestamp']:
+        latest_results['timestamp'] = timestamp
+        latest_results['model_results'].clear()
+        latest_results['model_results'].extend(tmp)
 
 def run_object_detection():
     yolo = YOLO("yolov8n.pt")
@@ -52,6 +55,7 @@ def run_object_detection():
     warning_list = read_warning_list()
     
     results = []
+    latest_results = { 'model_results': [], 'timestamp': 0 }
     thread = None
     while True:
         ## press q or Esc to quit
@@ -66,11 +70,11 @@ def run_object_detection():
 
         # predict yolo
         if thread is None or not thread.is_alive():
-            thread = threading.Thread(target=run_model_on_img, args=(yolo, img, results))
+            thread = threading.Thread(target=run_model_on_img, args=(yolo, img, int(time.time()), latest_results))
             thread.start()
 
         alert_list = []
-        for r in results:
+        for r in latest_results['model_results']:
             for b in r.boxes:
 
                 xyxy = b.xyxy.numpy()[0]
