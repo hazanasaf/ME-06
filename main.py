@@ -92,8 +92,8 @@ def run_object_detection():
                     #else:
                     #    alert_list.append('ding')
                 
-                cv2.rectangle(img, (xyxy[0], xyxy[1]), (xyxy[2], xyxy[3]), c, 2)
-                cv2.putText(img, class_name, (xyxy[0], xyxy[1]), cv2.FONT_HERSHEY_SIMPLEX, 1, c)
+                        cv2.rectangle(img, (xyxy[0], xyxy[1]), (xyxy[2], xyxy[3]), c, 2)
+                        cv2.putText(img, class_name, (xyxy[0], xyxy[1]), cv2.FONT_HERSHEY_SIMPLEX, 1, c)
 
         ## display predictions
         cv2.rectangle(img, (ALERT_REGION[0], ALERT_REGION[1]), (ALERT_REGION[2], ALERT_REGION[3]), (0,255,0), 2)
