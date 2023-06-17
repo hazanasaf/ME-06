@@ -16,6 +16,9 @@ TIME_OF_LAST_DING = datetime.now()
 MIN_DING_INTERVAL = 3 # seconds
 resize_scale_factor = 1
 
+lock = threading.Lock()
+latest_results = { 'model_results': [], 'timestamp': 0 }
+
 def point_in_rect(xy,xyxy):
     return xyxy[0] <= xy[0] <= xyxy[2] and xyxy[1] <= xy[1] <= xyxy[3]
 
@@ -35,12 +38,15 @@ def read_warning_list():
 def rect_intersects_alert_region(xyxy):
     return rect_intersects_rect(xyxy, ALERT_REGION)
 
-def run_model_on_img(yolo, img, timestamp, latest_results):
+def run_model_on_img(yolo, img, timestamp):
     tmp = yolo.predict(img)
+    lock.acquire()
     if timestamp > latest_results['timestamp']:
         latest_results['timestamp'] = timestamp
         latest_results['model_results'].clear()
         latest_results['model_results'].extend(tmp)
+        print(latest_results['timestamp'])
+    lock.release()
 
 def run_object_detection():
     yolo = YOLO("yolov8n.pt")
@@ -55,7 +61,6 @@ def run_object_detection():
     warning_list = read_warning_list()
     
     results = []
-    latest_results = { 'model_results': [], 'timestamp': 0 }
     thread = None
     while True:
         ## press q or Esc to quit
@@ -70,7 +75,7 @@ def run_object_detection():
 
         # predict yolo
         if thread is None or not thread.is_alive():
-            thread = threading.Thread(target=run_model_on_img, args=(yolo, img, int(time.time()), latest_results))
+            thread = threading.Thread(target=run_model_on_img, args=(yolo, img, int(time.time()*1000)))
             thread.start()
 
         alert_list = []
