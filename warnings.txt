@@ -1,5 +1,6 @@
 person
 stop sign
+traffic light
 dog
 cat
 car
@@ -11,5 +12,10 @@ bus
 bench
 parking meter
 fire hydrant
-
-
+trash bin
+bin
+garbage bin
+waste bin
+boulder
+tree
+tree trunk
